@@ -254,15 +254,14 @@ CREATE TABLE patientDoctor (
   FOREIGN KEY (idDoctor) REFERENCES doctors(id)
 ) ENGINE=InnoDB;
 
-/* Jamais faire le memberID comme foreign key, une fois qui l'id peut appartenir a plusieurs tables */
 CREATE TABLE chat (
   id int(11) NOT NULL AUTO_INCREMENT,
   memberTypeFrom int(11) NOT NULL,
   idMemberFrom int(11) NOT NULL,
   memberTypeTo int(11) NOT NULL,
   idMemberTo int(11) NOT NULL,
-  msg varchar() NOT NULL,
-  date	datetime DEFAULT CURRENT_TIMESTAMP, 
+  msg LONGTEXT NOT NULL,
+  dateMsg DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   unread boolean NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (memberTypeFrom) REFERENCES memberType(id),
@@ -284,9 +283,9 @@ CREATE TABLE ListExams (
   id int(11) NOT NULL AUTO_INCREMENT,
   memberTypeCreator int(11) NOT NULL,
   idMemberCreator int(11) NULL,
-  examName varchar(200) NOT NULL;
-  examDescription varchar() NOT NULL;
-  idCategorieExam int(11) NOT NULL;
+  examName varchar(200) NOT NULL,
+  examDescription LONGTEXT NOT NULL,
+  idCategorieExam int(11) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (memberTypeCreator) REFERENCES memberType(id),
   FOREIGN KEY (idCategorieExam) REFERENCES categorieExams(id)
