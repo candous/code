@@ -290,3 +290,184 @@ CREATE TABLE ListExams (
   FOREIGN KEY (memberTypeCreator) REFERENCES memberType(id),
   FOREIGN KEY (idCategorieExam) REFERENCES categorieExams(id)
 ) ENGINE=InnoDB;
+
+
+
+CREATE TABLE examsPatient (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idExam int(11) NOT NULL,
+  idDoctor int(11) NOT NULL,
+  idPatient int(11) NOT NULL,
+  observation LONGTEXT NOT NULL,
+  dateExam DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (idExam) REFERENCES ListExams(id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE commentsExam (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idExamPatient int(11) NULL,
+  idDoctorFrom int(11) NULL,
+  comment LONGTEXT NULL,
+  dateComment DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (idExamPatient) REFERENCES examsPatient(id),
+  FOREIGN KEY (idDoctorFrom) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE imageExam (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idExamPatient int(11) NULL,
+  title TEXT NULL,
+  Description LONGTEXT NULL,
+  dateCreation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (idExamPatient) REFERENCES examsPatient(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE commentsImageExam (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idimageExam int(11) NOT NULL,
+  idDoctorFrom int(11) NOT NULL,
+  comment LONGTEXT NULL,
+  dateComment DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (idimageExam) REFERENCES imageExam(id),
+  FOREIGN KEY (idDoctorFrom) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE alergies (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  product varchar(200) NOT NULL,
+  description varchar(200) NULL,
+  memberType int(11) NOT NULL,
+  idMember int(11) NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE alergiePatient (
+  idAlergie int(11) NOT NULL,
+  idPatient int(11) NOT NULL,
+  idDoctor int(11) NOT NULL,
+  comment varchar(200) NULL,
+  PRIMARY KEY (idAlergie, idPatient),
+  FOREIGN KEY (idAlergie) REFERENCES alergies(id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE favoriteICDs (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idDisease int(11) NOT NULL,
+  idDoctor int(11) NOT NULL,
+  comments varchar(200) NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (idDisease) REFERENCES disease(id),
+  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE patientConditions (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idDisease int(11) NOT NULL,
+  idPatient int(11) NOT NULL,
+  idDoctorDiagnosis int(11) NULL,
+  comments LONGTEXT NULL,
+  dateDiagnosis NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (idDisease) REFERENCES disease(id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctorDiagnosis) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE appointments (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  dateAppointment DATETIME NOT NULL,
+  idPatient int(11) NOT NULL,
+  idDoctor int(11) NOT NULL,
+  comments LONGTEXT NULL,
+  confirmed	boolean NOT NULL,
+  smsSent boolean NOT NULL,
+  mailSent boolean NOT NULL,
+  called boolean NOT NULL,
+  showup boolean NOT NULL,
+  patientArrived boolean NOT NULL,
+  arrivalTime DATETIME NULL,
+  unread boolean NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE procedures (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  description TEXT NULL,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+) ENGINE=InnoDB;
+
+CREATE TABLE proceduresPatient (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idProcedure int(11) NOT NULL,
+  idPatient int(11) NOT NULL,
+  idDoctorDemand int(11) NOT NULL,
+  idDoctorProcedure int(11) NOT NULL,
+  dateProcedure DATETIME NOT NULL,
+  observations LONGTEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+) ENGINE=InnoDB;
+
+CREATE TABLE commentsProcedure (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idProceduresPatient int(11) NOT NULL,
+  idDoctorFrom int(11) NOT NULL,
+  comment LONGTEXT NULL,
+  dateComment DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (idProceduresPatient) REFERENCES proceduresPatient(id),
+  FOREIGN KEY (idDoctorFrom) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE medication (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  description TEXT NULL,
+  posology TEXT NULL,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE medicationDose (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idMedication int(11) NOT NULL,
+  dose	TEXT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (idMedication) REFERENCES medication(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE medicationPatient (
+  idMedication int(11) NOT NULL,
+  idPatient int(11) NOT NULL,
+  idMedDose	int(11) NOT NULL,
+  PRIMARY KEY (idMedication, idPatient, idMedDose),
+  FOREIGN KEY (idMedication) REFERENCES medication(id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idMedDose) REFERENCES medicationDose(id)
+) ENGINE=InnoDB;
+
+
+	
+
+
+
+
+
