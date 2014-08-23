@@ -36,7 +36,7 @@ CREATE TABLE relationshipStatus (
 
 
 
-CREATE TABLE ICDchapters (
+CREATE TABLE ICDChapter (
   id int(11) NOT NULL AUTO_INCREMENT,
   ICDRange varchar(20) NOT NULL, 
   description varchar(200) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE ICDSpecificChapter (
   ICDRange varchar(20) NOT NULL, 
   description varchar(200) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (idICDChapter) REFERENCES ICDchapters(id)
+  FOREIGN KEY (idICDChapter) REFERENCES ICDChapter(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE ICDDisease (
@@ -279,7 +279,7 @@ CREATE TABLE categorieExams (
 ) ENGINE=InnoDB;
 
 
-CREATE TABLE ListExams (
+CREATE TABLE listExams (
   id int(11) NOT NULL AUTO_INCREMENT,
   memberTypeCreator int(11) NOT NULL,
   idMemberCreator int(11) NULL,
@@ -301,7 +301,7 @@ CREATE TABLE examsPatient (
   observation LONGTEXT NOT NULL,
   dateExam DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   PRIMARY KEY (id),
-  FOREIGN KEY (idExam) REFERENCES ListExams(id),
+  FOREIGN KEY (idExam) REFERENCES listExams(id),
   FOREIGN KEY (idPatient) REFERENCES patients(id)
 ) ENGINE=InnoDB;
 
@@ -464,8 +464,150 @@ CREATE TABLE medicationPatient (
   FOREIGN KEY (idMedDose) REFERENCES medicationDose(id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE precription (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idPatient int(11) NOT NULL,
+  idDoctor	int(11) NOT NULL,
+  datePrecription DATETIME NOT NULL,
+  observations TEXT NOT NULL;
+  PRIMARY KEY (id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+) ENGINE=InnoDB;
 
-	
+CREATE TABLE prescriptionsModel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  modelName TEXT NOT NULL,
+  observations LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE statement (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idPatient int(11) NOT NULL,
+  idDoctor	int(11) NOT NULL,
+  observations LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE statementModel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  modelName TEXT NOT NULL,
+  observations LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE smsModel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  modelName TEXT NOT NULL,
+  msg LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE mailModel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  idMailType int(11) NOT NULL,
+  modelName TEXT NOT NULL,
+  msg LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idMailType) REFERENCES mailType(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE mailHistory (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  toAddress TEXT NOT NULL,
+  memberTypeFrom int(11) NOT NULL,
+  idMemberFrom	int(11) NOT NULL,
+  idMailType int(11) NOT NULL,
+  subject TEXT NOT NULL,
+  msg LONGTEXT NOT NULL,
+  dateSent DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  sent boolean NOT NULL,
+  read boolean NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberTypeFrom) REFERENCES memberType(id),
+  FOREIGN KEY (idMailType) REFERENCES mailType(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE smsHistory (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  toPhone int(11) NOT NULL,
+  memberTypeFrom int(11) NOT NULL,
+  idMemberFrom	int(11) NOT NULL,
+  msg LONGTEXT NOT NULL,
+  dateSent DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  sent boolean NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberTypeFrom) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE loginsLog (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  dateLogin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  success boolean NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
+
+
+
+CREATE TABLE insurancesDoctor (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  idInsuranceCompany int(11) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idInsuranceCompany) REFERENCES insuranceCompany(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE evolutionPatient (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  idPatient int(11) NOT NULL,
+  idDoctor	int(11) NOT NULL,
+  evolutionName TEXT NULL,
+  observations LONGTEXT NOT NULL,
+  dateEvolution DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idInsuranceCompany) REFERENCES insuranceCompany(id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE evolutionModel (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  modelName TEXT NOT NULL,
+  msg LONGTEXT NOT NULL,
+  comments TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id)
+) ENGINE=InnoDB;
 
 
 
