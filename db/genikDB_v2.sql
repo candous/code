@@ -637,32 +637,30 @@ CREATE TABLE configurations (
   FOREIGN KEY (idSmsAppointmentModel) REFERENCES smsModel(id)
 ) ENGINE=InnoDB;
 
-
-CREATE TABLE exercise (
-  id int(11) NOT NULL AUTO_INCREMENT,
-  description varchar(200) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
-
 CREATE TABLE patientData (
   id int(11) NOT NULL AUTO_INCREMENT,
   memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   dateChange DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   idDoctorModifiedHistory	int(11) NOT NULL,
-  height int(11) NULL,
-  weight double NULL,
-  bloodPressureMax int(11) NULL,
-  bloodPressureMin int(11) NULL,
-  bloodSugar int(11) NULL,
-  heartRate double NULL,
-  temperature double NULL,
-  drink boolean NULL,
-  smoke boolean NULL,
-  BMI double NULL,
-  idExercise int(11) NULL,
+  height int(11) NOT NULL,
+  weight int(11) NOT NULL,
+
+
+  
   PRIMARY KEY (id),
   FOREIGN KEY (memberType) REFERENCES memberType(id),
-  FOREIGN KEY (idDoctorModifiedHistory) REFERENCES doctors(id),
-  FOREIGN KEY (idExercise) REFERENCES exercise(id)
 ) ENGINE=InnoDB;	
+
+
+	height	int	cm
+	weight	double	kg
+	bloodPressureMin	int	DIA mmHg
+	bloodPressureMax	int	SYS mmHg
+	bloodSugar	int	mg/dL
+	heartRate/min	double	/min
+	Temperature	double	ºC
+	drink	int(bool)	
+	smoke	int(bool)	
+	BMI (body mass index)	double	
+	exercise	int(bool)	
