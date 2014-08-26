@@ -15,13 +15,11 @@ CREATE TABLE designation (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
-
 CREATE TABLE memberType (
   id int(11) NOT NULL AUTO_INCREMENT,
   description varchar(200) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE mailType (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -69,8 +67,7 @@ CREATE TABLE disease (
   FOREIGN KEY (idICDDisease) REFERENCES ICDDisease(id)
 ) ENGINE=InnoDB;
 
-
-/*USERS : doctors+admins+secretaries*/
+/*USERS : users+admins+secretaries*/
 CREATE TABLE users (
   id int(11) NOT NULL AUTO_INCREMENT,
   firstName varchar(50) NOT NULL,
@@ -87,12 +84,27 @@ CREATE TABLE users (
   country varchar(50) NULL,
   adress varchar(200) NULL,
   URLPhoto varchar(200) NOT NULL,
-  smsSchedule boolean NOT NULL,
-  mailSchedule boolean NOT NULL,
+  receiveSmsSchedule boolean NOT NULL,
+  receiveMailSchedule boolean NOT NULL,
   isOnline boolean NOT NULL,
   rightToSendSms boolean NOT NULL,
   rightToSendMail boolean NOT NULL,
-  smsNotifications boolean NOT NULL,
+  receiveSmsNotifications boolean NOT NULL,
+  wantSendMailBirthday	boolean NOT NULL,
+  wantSendSMSBirthday	boolean NOT NULL,
+  daysBeforeSMSbirthday int(11) NOT NULL,
+  daysBeforeMailBirthday int(11) NOT NULL,
+  wantSendMailAppointConfirmation	boolean NOT NULL,
+  wantSendSMSAppointConfirmation	boolean NOT NULL,
+  daysBeforeSMSConfirmation int(11) NOT NULL,
+  daysBeforeMailConfirmation int(11) NOT NULL,
+  idMailConfirmationModel int(11) NOT NULL,
+  idSmsConfirmationModel int(11) NOT NULL,
+  idMailBirthdayModel int(11) NOT NULL,
+  idSmsBirthdayModel int(11) NOT NULL,
+  receiveSmsNewAppointments	boolean NOT NULL,
+  idSmsAppointmentModel int(11) NOT NULL,
+  dateEpirationGenik	DATETIME NOT NULL,
   active boolean NOT NULL,
   SMScredits int(11) NOT NULL,
   lastLogIn	DATETIME NULL,
@@ -100,6 +112,11 @@ CREATE TABLE users (
   gender int(11) NULL,
   memberType int(11) NOT NULL,
   PRIMARY KEY (id),
+  FOREIGN KEY (idMailConfirmationModel) REFERENCES mailModel(id),
+  FOREIGN KEY (idSmsConfirmationModel) REFERENCES smsModel(id),
+  FOREIGN KEY (idMailBirthdayModel) REFERENCES mailModel(id),
+  FOREIGN KEY (idSmsBirthdayModel) REFERENCES smsModel(id),
+  FOREIGN KEY (idSmsAppointmentModel) REFERENCES smsModel(id),
   FOREIGN KEY (designation) REFERENCES relationshipStatus(id),
   FOREIGN KEY (gender) REFERENCES gender(id),
   FOREIGN KEY (memberType) REFERENCES memberType(id)
@@ -113,7 +130,6 @@ CREATE TABLE insuranceCompany (
   PRIMARY KEY (id),
   FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
 
 /*PATIENTS*/
 CREATE TABLE patients (
@@ -129,22 +145,20 @@ CREATE TABLE patients (
   country varchar(50) NULL,
   adress varchar(200) NULL,
   URLPhoto varchar(200) NOT NULL,
-  smsBirthday boolean NOT NULL,
-  mailBirthday boolean NOT NULL,
-  smsAppointement boolean NOT NULL,
-  mailAppointement boolean NOT NULL,
-  id_relationshipStatus int(11) NULL,
-  InsuranceCompany int(11) NOT NULL,
+  receiveSmsBirthday boolean NOT NULL,
+  receiveMailBirthday boolean NOT NULL,
+  receiveSmsAppointement boolean NOT NULL,
+  receiveMailAppointement boolean NOT NULL,
+  idRelationshipStatus int(11) NULL,
+  idInsuranceCompany int(11) NOT NULL,
   gender int(11) NULL,
   memberType int(11) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (id_relationshipStatus) REFERENCES designation(id),
-  FOREIGN KEY (InsuranceCompany) REFERENCES insuranceCompany(id),
+  FOREIGN KEY (idRelationshipStatus) REFERENCES designation(id),
+  FOREIGN KEY (idInsuranceCompany) REFERENCES insuranceCompany(id),
   FOREIGN KEY (gender) REFERENCES gender(id),
   FOREIGN KEY (memberType) REFERENCES memberType(id)
 ) ENGINE=InnoDB;
-
-
 
 CREATE TABLE usersRelationship (
   idUser1 int(11) NOT NULL,
@@ -174,7 +188,6 @@ CREATE TABLE chat (
   FOREIGN KEY (idMemberTo) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
-
 CREATE TABLE categorieExams (
   id int(11) NOT NULL AUTO_INCREMENT,
   description varchar(200) NOT NULL,
@@ -182,7 +195,6 @@ CREATE TABLE categorieExams (
   PRIMARY KEY (id),
   FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE listExams (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -214,6 +226,7 @@ CREATE TABLE commentsExam (
   idDoctorFrom int(11) NULL,
   comment LONGTEXT NULL,
   dateComment DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  unread boolean NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (idExamPatient) REFERENCES examsPatient(id),
   FOREIGN KEY (idDoctorFrom) REFERENCES users(id)
@@ -228,7 +241,6 @@ CREATE TABLE imageExam (
   PRIMARY KEY (id),
   FOREIGN KEY (idExamPatient) REFERENCES examsPatient(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE commentsImageExam (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -249,7 +261,6 @@ CREATE TABLE alergies (
   PRIMARY KEY (id),
   FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE alergiePatient (
   idAlergie int(11) NOT NULL,
@@ -338,17 +349,14 @@ CREATE TABLE commentsProcedure (
   FOREIGN KEY (idDoctorFrom) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
-/***************************ARRETE*******************************/
-
 CREATE TABLE medication (
   id int(11) NOT NULL AUTO_INCREMENT,
   name TEXT NOT NULL,
   description TEXT NULL,
   posology TEXT NULL,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE medicationDose (
@@ -377,18 +385,17 @@ CREATE TABLE precription (
   observations TEXT NOT NULL;
   PRIMARY KEY (id),
   FOREIGN KEY (idPatient) REFERENCES patients(id),
-  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+  FOREIGN KEY (idDoctor) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE prescriptionsModel (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   modelName TEXT NOT NULL,
   observations LONGTEXT NOT NULL,
   comments TEXT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE statement (
@@ -399,49 +406,44 @@ CREATE TABLE statement (
   comments TEXT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (idPatient) REFERENCES patients(id),
-  FOREIGN KEY (idDoctor) REFERENCES doctors(id)
+  FOREIGN KEY (idDoctor) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE statementModel (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   modelName TEXT NOT NULL,
   observations LONGTEXT NOT NULL,
   comments TEXT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE smsModel (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   modelName TEXT NOT NULL,
   msg LONGTEXT NOT NULL,
   comments TEXT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE mailModel (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   idMailType int(11) NOT NULL,
   modelName TEXT NOT NULL,
   msg LONGTEXT NOT NULL,
   comments TEXT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idMember) REFERENCES users(id),
   FOREIGN KEY (idMailType) REFERENCES mailType(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE mailHistory (
   id int(11) NOT NULL AUTO_INCREMENT,
   toAddress TEXT NOT NULL,
-  memberTypeFrom int(11) NOT NULL,
   idMemberFrom	int(11) NOT NULL,
   idMailType int(11) NOT NULL,
   subject TEXT NOT NULL,
@@ -450,45 +452,38 @@ CREATE TABLE mailHistory (
   sent boolean NOT NULL,
   read boolean NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberTypeFrom) REFERENCES memberType(id),
+  FOREIGN KEY (idMemberFrom) REFERENCES users(id),
   FOREIGN KEY (idMailType) REFERENCES mailType(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE smsHistory (
   id int(11) NOT NULL AUTO_INCREMENT,
   toPhone int(11) NOT NULL,
-  memberTypeFrom int(11) NOT NULL,
   idMemberFrom	int(11) NOT NULL,
   msg LONGTEXT NOT NULL,
   dateSent DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   sent boolean NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberTypeFrom) REFERENCES memberType(id)
+  FOREIGN KEY (idMemberFrom) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE loginsLog (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   dateLogin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   success boolean NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
-
 
 CREATE TABLE insurancesDoctor (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   idInsuranceCompany int(11) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idMember) REFERENCES users(id),
   FOREIGN KEY (idInsuranceCompany) REFERENCES insuranceCompany(id)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE evolutionPatient (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -498,50 +493,19 @@ CREATE TABLE evolutionPatient (
   observations LONGTEXT NOT NULL,
   dateEvolution DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id),
-  FOREIGN KEY (idInsuranceCompany) REFERENCES insuranceCompany(id)
-) ENGINE=InnoDB;
-
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctor) REFERENCES users(id)
+  ) ENGINE=InnoDB;
 
 CREATE TABLE evolutionModel (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
   idMember	int(11) NOT NULL,
   modelName TEXT NOT NULL,
   msg LONGTEXT NOT NULL,
   comments TEXT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id)
+  FOREIGN KEY (idMember) REFERENCES users(id)
 ) ENGINE=InnoDB;
-
-CREATE TABLE configurations (
-  id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
-  idMember	int(11) NOT NULL,
-  sendMailBirthday	boolean NOT NULL,
-  sendSMSBirthday	boolean NOT NULL,
-  daysBeforeSMSbirthday int(11) NOT NULL,
-  daysBeforeMailBirthday int(11) NOT NULL,
-  sendMailAppointConfirmation	boolean NOT NULL,
-  sendSMSAppointConfirmation	boolean NOT NULL,
-  daysBeforeSMSConfirmation int(11) NOT NULL,
-  daysBeforeMailConfirmation int(11) NOT NULL,
-  idMailConfirmationModel int(11) NOT NULL,
-  idSmsConfirmationModel int(11) NOT NULL,
-  idMailBirthdayModel int(11) NOT NULL,
-  idSmsBirthdayModel int(11) NOT NULL,
-  receiveSmsAppointments	boolean NOT NULL,
-  idSmsAppointmentModel int(11) NOT NULL,
-  dateEpiration	DATETIME NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id),
-  FOREIGN KEY (idMailConfirmationModel) REFERENCES mailModel(id),
-  FOREIGN KEY (idSmsConfirmationModel) REFERENCES smsModel(id),
-  FOREIGN KEY (idMailBirthdayModel) REFERENCES mailModel(id),
-  FOREIGN KEY (idSmsBirthdayModel) REFERENCES smsModel(id),
-  FOREIGN KEY (idSmsAppointmentModel) REFERENCES smsModel(id)
-) ENGINE=InnoDB;
-
 
 CREATE TABLE exercise (
   id int(11) NOT NULL AUTO_INCREMENT,
@@ -551,8 +515,7 @@ CREATE TABLE exercise (
 
 CREATE TABLE patientData (
   id int(11) NOT NULL AUTO_INCREMENT,
-  memberType int(11) NOT NULL,
-  idMember	int(11) NOT NULL,
+  idPatient	int(11) NOT NULL,
   dateChange DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   idDoctorModifiedHistory	int(11) NOT NULL,
   height int(11) NULL,
@@ -567,7 +530,7 @@ CREATE TABLE patientData (
   BMI double NULL,
   idExercise int(11) NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (memberType) REFERENCES memberType(id),
-  FOREIGN KEY (idDoctorModifiedHistory) REFERENCES doctors(id),
+  FOREIGN KEY (idPatient) REFERENCES patients(id),
+  FOREIGN KEY (idDoctorModifiedHistory) REFERENCES users(id),
   FOREIGN KEY (idExercise) REFERENCES exercise(id)
 ) ENGINE=InnoDB;
