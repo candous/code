@@ -609,7 +609,58 @@ CREATE TABLE evolutionModel (
   FOREIGN KEY (memberType) REFERENCES memberType(id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE configurations (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  sendMailBirthday	boolean NOT NULL,
+  sendSMSBirthday	boolean NOT NULL,
+  daysBeforeSMSbirthday int(11) NOT NULL,
+  daysBeforeMailBirthday int(11) NOT NULL,
+  sendMailAppointConfirmation	boolean NOT NULL,
+  sendSMSAppointConfirmation	boolean NOT NULL,
+  daysBeforeSMSConfirmation int(11) NOT NULL,
+  daysBeforeMailConfirmation int(11) NOT NULL,
+  idMailConfirmationModel int(11) NOT NULL,
+  idSmsConfirmationModel int(11) NOT NULL,
+  idMailBirthdayModel int(11) NOT NULL,
+  idSmsBirthdayModel int(11) NOT NULL,
+  receiveSmsAppointments	boolean NOT NULL,
+  idSmsAppointmentModel int(11) NOT NULL,
+  dateEpiration	DATETIME NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+  FOREIGN KEY (idMailConfirmationModel) REFERENCES mailModel(id),
+  FOREIGN KEY (idSmsConfirmationModel) REFERENCES smsModel(id),
+  FOREIGN KEY (idMailBirthdayModel) REFERENCES mailModel(id),
+  FOREIGN KEY (idSmsBirthdayModel) REFERENCES smsModel(id),
+  FOREIGN KEY (idSmsAppointmentModel) REFERENCES smsModel(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE patientData (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  memberType int(11) NOT NULL,
+  idMember	int(11) NOT NULL,
+  dateChange DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  idDoctorModifiedHistory	int(11) NOT NULL,
+  height int(11) NOT NULL,
+  weight int(11) NOT NULL,
 
 
+  
+  PRIMARY KEY (id),
+  FOREIGN KEY (memberType) REFERENCES memberType(id),
+) ENGINE=InnoDB;	
 
 
+	height	int	cm
+	weight	double	kg
+	bloodPressureMin	int	DIA mmHg
+	bloodPressureMax	int	SYS mmHg
+	bloodSugar	int	mg/dL
+	heartRate/min	double	/min
+	Temperature	double	ºC
+	drink	int(bool)	
+	smoke	int(bool)	
+	BMI (body mass index)	double	
+	exercise	int(bool)	
